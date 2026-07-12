@@ -125,4 +125,4 @@ CSV / Excel / JSON
 | Visualization | ✅ |
 | Dashboard | ✅ |
 | Reporting | ✅ |
-| Testing polish | ⏳ |
+| Testing & hardening | ✅ |

@@ -371,15 +371,17 @@ pytest suite, quality tools, docs sync, README polish.
 ### Deliverables
 
 - [x] `docs/testing-plan.md`  
-- [ ] `tests/**`  
-- [ ] Root `README.md`  
+- [x] `tests/unit/**` + `tests/integration/**` + `tests/data_quality/**`  
+- [x] `tests/fixtures/files/**`  
+- [x] `scripts/quality.sh`  
+- [x] Root `README.md` (setup E2E + how to test + portfolio narrative)  
 
 ### Checklist
 
-- [ ] `pytest` green  
-- [ ] ruff/black/mypy clean  
-- [ ] README: setup PG, migrate, seed, dashboard, report  
-- [ ] Portfolio narrative (what/why/how)  
+- [x] `pytest` green (unit; integration optional via env)  
+- [x] ruff/black/mypy clean  
+- [x] README: setup PG, migrate, seed, dashboard, report  
+- [x] Portfolio narrative (what/why/how)  
 
 ### Ưu tiên
 

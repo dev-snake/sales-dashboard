@@ -1,0 +1,4 @@
+code,first_name,last_name,email,phone,city,region_code,registered_at
+CUS-TEST-001,Alice,Nguyen,Alice@Example.COM,0901 111 111,Ha Noi,REG-R01,2024-01-15T10:00:00+00:00
+CUS-TEST-002,Bob,Tran,bob@example.com,+84 902-222-222,Da Nang,REG-R01,2024-02-01
+CUS-TEST-003,Carol,Le,,,Hue,REG-R01,15/03/2024

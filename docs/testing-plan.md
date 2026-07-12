@@ -187,10 +187,10 @@ pytest -q
 
 ## 13.12 Checklist Testing phase
 
-- [ ] conftest + TEST_DATABASE_URL documented  
-- [ ] unit suite green  
-- [ ] integration seed XS + metrics  
-- [ ] ETL valid/invalid files  
-- [ ] data quality invariants  
-- [ ] ruff/black/mypy clean on app  
-- [ ] README section “How to test”  
+- [x] conftest + TEST_DATABASE_URL documented (README + `.env.example`)  
+- [x] unit suite green (default `pytest -m "not integration and not data_quality"`)  
+- [x] integration tests (schema, ETL fixtures, metrics hand-calc) — skip if no DB  
+- [x] ETL valid/invalid fixture files under `tests/fixtures/files/`  
+- [x] data quality invariants DQ01/03/05–09 (skip if empty tables)  
+- [x] ruff/black/mypy + `scripts/quality.sh`  
+- [x] README section “How to test”  
