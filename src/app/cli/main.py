@@ -21,16 +21,18 @@ app = typer.Typer(
 )
 
 db_app = typer.Typer(help="Database utilities")
-etl_app = typer.Typer(help="ETL pipeline (stub)")
-seed_app = typer.Typer(help="Seed data (stub)")
+etl_app = typer.Typer(help="ETL pipeline")
+seed_app = typer.Typer(help="Seed data")
 report_app = typer.Typer(help="Reports (stub)")
-sql_app = typer.Typer(help="SQL catalog runner (stub)")
+sql_app = typer.Typer(help="SQL catalog runner")
+analytics_app = typer.Typer(help="Python analytics (KPI, RFM, ABC, cohort)")
 
 app.add_typer(db_app, name="db")
 app.add_typer(etl_app, name="etl")
 app.add_typer(seed_app, name="seed")
 app.add_typer(report_app, name="report")
 app.add_typer(sql_app, name="sql")
+app.add_typer(analytics_app, name="analytics")
 
 
 def _mask_database_url(url: str) -> str:
@@ -354,6 +356,171 @@ def report_generate(
 ) -> None:
     """Report generation — not implemented in scaffold phase."""
     typer.echo(f"Reports not implemented yet (Phase 9). type={report_type} format={fmt}")
+
+
+@analytics_app.command("kpi")
+def analytics_kpi(
+    days: int = typer.Option(30, "--days", help="Lookback window in days"),
+) -> None:
+    """Print KPI summary for the last N days."""
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.schemas.filters import AnalyticsFilter
+    from app.services.metrics_service import MetricsService
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+    try:
+        with session_scope(commit=False) as session:
+            kpi = MetricsService(session).summary(AnalyticsFilter.last_n_days(days))
+        for k, v in kpi.as_dict().items():
+            typer.echo(f"{k}: {v}")
+    except Exception as exc:
+        logger.exception("analytics kpi failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@analytics_app.command("rfm")
+def analytics_rfm(
+    days: int = typer.Option(365, "--days", help="Lookback window"),
+    limit: int = typer.Option(15, "--limit", "-n", help="Rows to print"),
+) -> None:
+    """RFM segment summary + top customers."""
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.schemas.filters import AnalyticsFilter
+    from app.services.customer_analytics_service import CustomerAnalyticsService
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+    try:
+        with session_scope(commit=False) as session:
+            scored, summary = CustomerAnalyticsService(session).rfm(
+                AnalyticsFilter.last_n_days(days)
+            )
+        typer.echo("=== Segment summary ===")
+        typer.echo(summary.to_string(index=False) if not summary.empty else "(empty)")
+        typer.echo("\n=== Top customers by monetary ===")
+        if scored.empty:
+            typer.echo("(empty)")
+        else:
+            cols = [
+                c
+                for c in (
+                    "customer_id",
+                    "recency_days",
+                    "frequency",
+                    "monetary",
+                    "r_score",
+                    "f_score",
+                    "m_score",
+                    "segment",
+                )
+                if c in scored.columns
+            ]
+            top = scored.sort_values("monetary", ascending=False).head(limit)
+            typer.echo(top[cols].to_string(index=False))
+    except Exception as exc:
+        logger.exception("analytics rfm failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@analytics_app.command("abc")
+def analytics_abc(
+    days: int = typer.Option(90, "--days"),
+    limit: int = typer.Option(20, "--limit", "-n"),
+) -> None:
+    """ABC product classification (top rows)."""
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.schemas.filters import AnalyticsFilter
+    from app.services.product_analytics_service import ProductAnalyticsService
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+    try:
+        with session_scope(commit=False) as session:
+            svc = ProductAnalyticsService(session)
+            abc = svc.abc(AnalyticsFilter.last_n_days(days))
+            pareto = svc.pareto(AnalyticsFilter.last_n_days(days))
+        typer.echo(f"Pareto 80%: {pareto}")
+        if abc.empty:
+            typer.echo("(empty)")
+        else:
+            cols = [
+                c
+                for c in ("sku", "product_name", "revenue", "cum_pct", "abc_class")
+                if c in abc.columns
+            ]
+            typer.echo(abc.head(limit)[cols].to_string(index=False))
+    except Exception as exc:
+        logger.exception("analytics abc failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@analytics_app.command("cohort")
+def analytics_cohort(
+    days: int = typer.Option(365, "--days"),
+) -> None:
+    """Print cohort retention long table (head)."""
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.schemas.filters import AnalyticsFilter
+    from app.services.customer_analytics_service import CustomerAnalyticsService
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+    try:
+        with session_scope(commit=False) as session:
+            matrix, _pivot = CustomerAnalyticsService(session).cohort(
+                AnalyticsFilter.last_n_days(days)
+            )
+        if matrix.empty:
+            typer.echo("(empty)")
+        else:
+            typer.echo(matrix.head(40).to_string(index=False))
+    except Exception as exc:
+        logger.exception("analytics cohort failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@analytics_app.command("trend")
+def analytics_trend(
+    days: int = typer.Option(180, "--days"),
+) -> None:
+    """Monthly revenue trend with MoM %."""
+    from app.analytics.trends import add_mom_change, monthly_aggregate
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.repositories.analytics import AnalyticsRepository
+    from app.schemas.filters import AnalyticsFilter
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+    try:
+        with session_scope(commit=False) as session:
+            lines = AnalyticsRepository(session).fetch_order_lines(
+                AnalyticsFilter.last_n_days(days)
+            )
+        monthly = monthly_aggregate(lines)
+        trend = add_mom_change(monthly, value_col="revenue")
+        if trend.empty:
+            typer.echo("(empty)")
+        else:
+            typer.echo(trend.to_string(index=False))
+    except Exception as exc:
+        logger.exception("analytics trend failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
 
 
 @sql_app.command("list")

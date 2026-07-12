@@ -1,4 +1,5 @@
-"""Data access layer (repositories).
+"""Data access layer."""
 
-Stub package — no query logic in scaffold phase.
-"""
+from app.repositories.analytics import AnalyticsRepository
+
+__all__ = ["AnalyticsRepository"]

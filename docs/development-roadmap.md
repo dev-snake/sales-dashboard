@@ -221,15 +221,22 @@ pandas/numpy analytics + MetricsService thống nhất.
 
 ### Deliverables
 
-- [x] `docs/python-architecture.md` (partial)  
-- [ ] `app/services/*` `app/analytics/*`  
+- [x] `docs/python-architecture.md`  
+- [x] `src/app/analytics/*` — RFM, ABC, cohort, trends, descriptive  
+- [x] `src/app/repositories/analytics.py`  
+- [x] `MetricsService`, `CustomerAnalyticsService`, `ProductAnalyticsService`, `InventoryService`  
+- [x] `AnalyticsFilter` / `KPIResult`  
+- [x] CLI `analytics kpi|rfm|abc|cohort|trend`  
+- [x] Unit tests pure analytics + KPI  
 
 ### Checklist
 
-- [ ] KPI numbers match SQL R01/R02 on fixture  
-- [ ] RFM segments populated  
-- [ ] ABC labels A/B/C  
-- [ ] Cohort matrix shape correct  
+- [x] KPI from lines matches metric defs (revenue/cogs/profit/aov)  
+- [x] RFM scores + segments  
+- [x] ABC A/B/C + Pareto helper  
+- [x] Cohort long matrix + pivot  
+- [x] MoM trend helper  
+- [ ] Live PG verify CLI after seed (manual)  
 
 ### Ưu tiên
 

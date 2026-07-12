@@ -225,6 +225,19 @@ sales-dashboard etl run-all --manifest datasets/manifest.example.yaml
 
 Contracts: [`docs/data-contracts.md`](docs/data-contracts.md). Rejects: `datasets/rejected/`.
 
+### Analytics (Phase 6)
+
+```bash
+# Cần DB + seed/ETL
+sales-dashboard analytics kpi --days 30
+sales-dashboard analytics rfm --days 365
+sales-dashboard analytics abc --days 90
+sales-dashboard analytics cohort --days 365
+sales-dashboard analytics trend --days 180
+```
+
+KPI definitions align with [`sql/metrics.md`](sql/metrics.md) (paid/completed + line_total).
+
 
 ---
 
@@ -251,7 +264,7 @@ Theo [`docs/development-roadmap.md`](docs/development-roadmap.md) (điều chỉ
 | **Seed data** | Faker multi-scale + sample export | ✅ |
 | **SQL catalog** | 135 queries + CLI runner | ✅ |
 | **ETL** | CSV/Excel/JSON → PostgreSQL | ✅ |
-| Analytics | pandas metrics, RFM, ABC, cohort | ⏳ |
+| **Analytics** | MetricsService, RFM, ABC, cohort, trends | ✅ |
 | Visualization | Plotly / Matplotlib | ⏳ |
 | Dashboard | Streamlit | ⏳ |
 | Reporting | Excel + PDF | ⏳ |

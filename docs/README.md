@@ -121,4 +121,5 @@ CSV / Excel / JSON
 | Seed data | ✅ |
 | SQL catalog (135) | ✅ |
 | ETL pipeline | ✅ |
-| Analytics / Visualization / Dashboard / Report | ⏳ |
+| Python analytics | ✅ |
+| Visualization / Dashboard / Report | ⏳ |
