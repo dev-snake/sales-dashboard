@@ -124,4 +124,5 @@ CSV / Excel / JSON
 | Python analytics | ✅ |
 | Visualization | ✅ |
 | Dashboard | ✅ |
-| Reporting | ⏳ |
+| Reporting | ✅ |
+| Testing polish | ⏳ |

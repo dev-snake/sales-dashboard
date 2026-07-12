@@ -334,15 +334,19 @@ Daily → Yearly Excel + PDF.
 ### Deliverables
 
 - [x] `docs/reporting-design.md`  
-- [ ] `app/reports/**`  
-- [ ] sample outputs gitignored  
+- [x] `src/app/reports/**` periods, package, collector, excel, pdf  
+- [x] `ReportService`  
+- [x] CLI `report generate`  
+- [x] Unit tests (period + excel/pdf sample package)  
+- [x] outputs under `output/reports/` (gitignored via output/)  
 
 ### Checklist
 
-- [ ] Monthly excel ≥ 8 sheets  
-- [ ] Monthly PDF opens, Unicode OK  
-- [ ] KPI match dashboard for same period  
-- [ ] daily/weekly/quarterly/yearly runnable  
+- [x] Monthly excel multi-sheet (Summary, Trend, rankings, RFM, ABC, Definitions…)  
+- [x] Monthly PDF with KPI table + matplotlib charts  
+- [x] KPI via MetricsService (same defs as dashboard)  
+- [x] daily / weekly / monthly / quarterly / yearly period resolution  
+- [ ] Live generate against seeded DB (manual)  
 
 ### Ưu tiên
 

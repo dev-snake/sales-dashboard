@@ -353,11 +353,44 @@ def seed_samples() -> None:
 
 @report_app.command("generate")
 def report_generate(
-    report_type: str = typer.Option("monthly", "--type", help="daily|weekly|monthly|..."),
-    fmt: str = typer.Option("excel", "--format", help="excel|pdf|both"),
+    report_type: str = typer.Option(
+        "monthly", "--type", help="daily|weekly|monthly|quarterly|yearly"
+    ),
+    fmt: str = typer.Option("both", "--format", help="excel|pdf|both"),
+    as_of: str | None = typer.Option(None, "--date", help="As-of date YYYY-MM-DD (default: today)"),
+    store_id: int | None = typer.Option(None, "--store-id", help="Optional store filter"),
 ) -> None:
-    """Report generation — not implemented in scaffold phase."""
-    typer.echo(f"Reports not implemented yet (Phase 9). type={report_type} format={fmt}")
+    """Generate Excel and/or PDF sales report for a period."""
+    from datetime import date
+
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.services.report_service import ReportService
+
+    as_of_date: date | None = None
+    if as_of:
+        as_of_date = date.fromisoformat(as_of)
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+
+    try:
+        with session_scope(commit=False) as session:
+            service = ReportService(session)
+            paths = service.generate(
+                report_type,
+                as_of=as_of_date,
+                fmt=fmt,
+                store_ids=[store_id] if store_id is not None else None,
+            )
+        typer.echo("OK — report generated")
+        for kind, path in paths.items():
+            typer.echo(f"  {kind}: {path}")
+    except Exception as exc:
+        logger.exception("Report generation failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
 
 
 @dashboard_app.command("run")

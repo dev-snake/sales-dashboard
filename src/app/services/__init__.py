@@ -5,6 +5,7 @@ from app.services.etl_service import EtlService
 from app.services.inventory_service import InventoryService
 from app.services.metrics_service import MetricsService
 from app.services.product_analytics_service import ProductAnalyticsService
+from app.services.report_service import ReportService
 from app.services.seed_service import SeedService
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "InventoryService",
     "MetricsService",
     "ProductAnalyticsService",
+    "ReportService",
     "SeedService",
 ]

@@ -1,1 +1,1 @@
-"""Period report generators: daily → yearly (Phase 9)."""
+"""Period report generators (use ReportService.generate)."""

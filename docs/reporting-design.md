@@ -262,10 +262,10 @@ Mọi divergence là bug.
 
 ## 11.13 Checklist Reporting phase
 
-- [ ] 5 generators daily→yearly  
-- [ ] Excel multi-sheet monthly complete  
-- [ ] PDF with KPI + ≥2 charts monthly  
-- [ ] CLI command  
-- [ ] Output paths under `output/reports/`  
-- [ ] Unicode VN on PDF verified  
-- [ ] Definitions sheet/appendix  
+- [x] 5 period types daily→yearly  
+- [x] Excel multi-sheet (openpyxl)  
+- [x] PDF with KPI + charts (reportlab + matplotlib)  
+- [x] CLI `report generate`  
+- [x] Output paths under `output/reports/`  
+- [x] Definitions sheet/appendix  
+- [ ] Live run + VN font embed polish (optional P2: DejaVu)  

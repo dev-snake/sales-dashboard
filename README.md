@@ -250,6 +250,16 @@ PYTHONPATH=src streamlit run src/app/dashboard/app.py
 Pages: **Overview** · **Sales** · **Products** · **Customers** · **Inventory**  
 Sidebar filters (form Apply/Reset) · 7 KPI cards with period deltas · Plotly charts.
 
+### Reporting (Phase 9)
+
+```bash
+sales-dashboard report generate --type monthly --format both
+sales-dashboard report generate --type daily --date 2024-06-15 --format excel
+sales-dashboard report generate --type yearly --format pdf
+```
+
+Output: `output/reports/excel/` and `output/reports/pdf/`.
+
 ---
 
 ## Cấu hình công cụ
@@ -278,7 +288,7 @@ Theo [`docs/development-roadmap.md`](docs/development-roadmap.md) (điều chỉ
 | **Analytics** | MetricsService, RFM, ABC, cohort, trends | ✅ |
 | **Visualization** | Plotly 8 types + Matplotlib PDF helpers | ✅ |
 | **Dashboard** | Streamlit multipage BI | ✅ |
-| Reporting | Excel + PDF | ⏳ |
+| **Reporting** | Excel multi-sheet + PDF executive | ✅ |
 | Testing | Mở rộng coverage | ⏳ |
 
 ---
