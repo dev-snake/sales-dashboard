@@ -1,1 +1,1 @@
-"""Streamlit dashboard application — Phase 8."""
+"""Streamlit multipage Sales Analytics Dashboard."""

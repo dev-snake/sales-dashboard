@@ -232,10 +232,11 @@ Filters đặc thù: group-by grain (day/week/month).
 
 ## 9.17 Checklist Dashboard phase
 
-- [ ] Multipage structure  
-- [ ] Global filters form  
-- [ ] ≥ 7 KPI metrics  
-- [ ] All 8 chart types xuất hiện ≥ 1 lần  
-- [ ] cache_data  
-- [ ] empty states  
-- [ ] uses MetricsService only for KPIs  
+- [x] Multipage structure (Overview + Sales/Products/Customers/Inventory)  
+- [x] Global filters form (Apply / Reset)  
+- [x] ≥ 7 KPI metrics + period deltas  
+- [x] Chart types: line, area, bar, pie, scatter, hist, heatmap, treemap  
+- [x] `@st.cache_data` on loaders  
+- [x] empty / DB error states  
+- [x] MetricsService for KPIs  
+

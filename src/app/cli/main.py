@@ -26,6 +26,7 @@ seed_app = typer.Typer(help="Seed data")
 report_app = typer.Typer(help="Reports (stub)")
 sql_app = typer.Typer(help="SQL catalog runner")
 analytics_app = typer.Typer(help="Python analytics (KPI, RFM, ABC, cohort)")
+dashboard_app = typer.Typer(help="Streamlit dashboard")
 
 app.add_typer(db_app, name="db")
 app.add_typer(etl_app, name="etl")
@@ -33,6 +34,7 @@ app.add_typer(seed_app, name="seed")
 app.add_typer(report_app, name="report")
 app.add_typer(sql_app, name="sql")
 app.add_typer(analytics_app, name="analytics")
+app.add_typer(dashboard_app, name="dashboard")
 
 
 def _mask_database_url(url: str) -> str:
@@ -356,6 +358,31 @@ def report_generate(
 ) -> None:
     """Report generation — not implemented in scaffold phase."""
     typer.echo(f"Reports not implemented yet (Phase 9). type={report_type} format={fmt}")
+
+
+@dashboard_app.command("run")
+def dashboard_run(
+    port: int = typer.Option(8501, "--port", help="Streamlit port"),
+) -> None:
+    """Launch Streamlit multipage dashboard."""
+    import subprocess
+    import sys
+
+    from app.config.settings import PROJECT_ROOT
+
+    app_path = PROJECT_ROOT / "src" / "app" / "dashboard" / "app.py"
+    env = {**dict(**__import__("os").environ), "PYTHONPATH": str(PROJECT_ROOT / "src")}
+    cmd = [
+        sys.executable,
+        "-m",
+        "streamlit",
+        "run",
+        str(app_path),
+        "--server.port",
+        str(port),
+    ]
+    typer.echo(f"Starting dashboard: {' '.join(cmd)}")
+    raise SystemExit(subprocess.call(cmd, env=env, cwd=str(PROJECT_ROOT)))
 
 
 @analytics_app.command("kpi")

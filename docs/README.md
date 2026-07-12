@@ -123,4 +123,5 @@ CSV / Excel / JSON
 | ETL pipeline | ✅ |
 | Python analytics | ✅ |
 | Visualization | ✅ |
-| Dashboard / Report | ⏳ |
+| Dashboard | ✅ |
+| Reporting | ⏳ |

@@ -296,15 +296,20 @@ Streamlit multipage interactive BI.
 ### Deliverables
 
 - [x] `docs/dashboard-design.md`  
-- [ ] `app/dashboard/**`  
+- [x] `src/app/dashboard/app.py` + multipage `pages/`  
+- [x] filters / kpi_cards / charts components  
+- [x] cached `data_access.py`  
+- [x] CLI `dashboard run`  
+- [x] `.streamlit/config.toml`  
 
 ### Checklist
 
-- [ ] All global filters work  
-- [ ] ≥ 7 KPIs  
-- [ ] 8 chart types xuất hiện  
-- [ ] MetricsService only for KPIs  
-- [ ] Demo script in README  
+- [x] Global filters form (Apply/Reset)  
+- [x] ≥ 7 KPIs + period deltas  
+- [x] 8 chart types across pages  
+- [x] MetricsService for KPIs  
+- [x] README launch instructions  
+- [ ] Live demo with seeded DB (manual)  
 
 ### Ưu tiên
 

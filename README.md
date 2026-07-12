@@ -238,6 +238,17 @@ sales-dashboard analytics trend --days 180
 
 KPI definitions align with [`sql/metrics.md`](sql/metrics.md) (paid/completed + line_total).
 
+### Dashboard (Phase 8)
+
+```bash
+# Cần migrate + seed
+sales-dashboard dashboard run
+# or
+PYTHONPATH=src streamlit run src/app/dashboard/app.py
+```
+
+Pages: **Overview** · **Sales** · **Products** · **Customers** · **Inventory**  
+Sidebar filters (form Apply/Reset) · 7 KPI cards with period deltas · Plotly charts.
 
 ---
 
@@ -266,7 +277,7 @@ Theo [`docs/development-roadmap.md`](docs/development-roadmap.md) (điều chỉ
 | **ETL** | CSV/Excel/JSON → PostgreSQL | ✅ |
 | **Analytics** | MetricsService, RFM, ABC, cohort, trends | ✅ |
 | **Visualization** | Plotly 8 types + Matplotlib PDF helpers | ✅ |
-| Dashboard | Streamlit | ⏳ |
+| **Dashboard** | Streamlit multipage BI | ✅ |
 | Reporting | Excel + PDF | ⏳ |
 | Testing | Mở rộng coverage | ⏳ |
 

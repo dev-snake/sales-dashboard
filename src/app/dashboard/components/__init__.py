@@ -1,1 +1,1 @@
-"""Reusable Streamlit UI components (Phase 8)."""
+"""Dashboard UI components."""
