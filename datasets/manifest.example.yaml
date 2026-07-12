@@ -1,0 +1,19 @@
+# Example multi-entity ETL manifest (simple YAML subset parser)
+# Usage:
+#   sales-dashboard etl run-all --manifest datasets/manifest.example.yaml
+#
+# Paths are relative to project root.
+
+ensure_sample_masters: true
+
+jobs:
+  - entity: customers
+    path: datasets/raw/samples/customers.csv
+  - entity: products
+    path: datasets/raw/samples/products.xlsx
+  - entity: orders
+    path: datasets/raw/samples/orders.csv
+  - entity: order_items
+    path: datasets/raw/samples/order_items.csv
+  - entity: payments
+    path: datasets/raw/samples/payments.json

@@ -316,12 +316,14 @@ Xem `testing-plan.md`.
 
 ## 6.11 Checklist ETL phase
 
-- [ ] Extractors CSV/Excel/JSON  
-- [ ] Pydantic schemas per entity  
-- [ ] Cleaning rules C-01…C-10  
-- [ ] Load order FK-safe  
-- [ ] Upsert masters  
-- [ ] Reject files + loguru metrics  
-- [ ] CLI `etl run` / `etl run-all`  
-- [ ] Sample raw files in `data/raw/samples/`  
-- [ ] Docs data contracts  
+- [x] Extractors CSV/Excel/JSON  
+- [x] Pydantic schemas per entity  
+- [x] Cleaning rules C-01…C-10 (core implemented)  
+- [x] Load order FK-safe (manifest / samples)  
+- [x] Upsert by natural key (customers/products/orders/payments)  
+- [x] Reject files + loguru metrics  
+- [x] CLI `etl run` / `etl run-all`  
+- [x] Sample raw files in `datasets/raw/samples/`  
+- [x] Docs data contracts (`docs/data-contracts.md`)  
+- [ ] Live PG verification (`etl run-all --samples`) — needs DATABASE_URL  
+

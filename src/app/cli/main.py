@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import typer
 from loguru import logger
 from sqlalchemy import text
@@ -171,9 +173,112 @@ def db_tables() -> None:
 
 
 @etl_app.command("run")
-def etl_run() -> None:
-    """ETL run — not implemented in scaffold phase."""
-    typer.echo("ETL not implemented yet (see Phase 5).")
+def etl_run(
+    entity: str = typer.Option(
+        ..., "--entity", "-e", help="customers|products|orders|order_items|payments"
+    ),
+    file: Path = typer.Option(..., "--file", "-f", help="Source CSV/Excel/JSON path"),  # noqa: B008
+    strict: bool = typer.Option(False, "--strict", help="Fail if any row rejects"),
+    ensure_masters: bool = typer.Option(
+        False,
+        "--ensure-masters",
+        help="Upsert sample masters (region/store/employee/category/brand/supplier)",
+    ),
+) -> None:
+    """Run full ETL pipeline for one entity file."""
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.services.etl_service import EtlService
+    from app.utils.errors import ETLError
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+
+    try:
+        with session_scope(commit=False) as session:
+            service = EtlService(session)
+            result = service.run_entity(
+                entity,
+                file,
+                strict=strict,
+                ensure_masters=ensure_masters,
+            )
+        _print_etl_result(result)
+        if result.status == "failed":
+            raise typer.Exit(code=1)
+    except ETLError as exc:
+        logger.exception("ETL failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    except Exception as exc:
+        logger.exception("ETL failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@etl_app.command("run-all")
+def etl_run_all(
+    manifest: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--manifest",
+        "-m",
+        help="Manifest file path (YAML subset). Default: built-in samples.",
+    ),
+    samples: bool = typer.Option(
+        False,
+        "--samples",
+        help="Load datasets/raw/samples in FK-safe order (implies sample masters)",
+    ),
+    strict: bool = typer.Option(False, "--strict", help="Fail job on any reject"),
+) -> None:
+    """Run multi-entity ETL from manifest or built-in sample set."""
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.services.etl_service import EtlService
+    from app.utils.errors import ETLError
+
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+
+    try:
+        with session_scope(commit=False) as session:
+            service = EtlService(session)
+            results = service.run_manifest(
+                manifest,
+                strict=strict,
+                use_samples=samples or manifest is None,
+            )
+        for r in results:
+            _print_etl_result(r)
+        if any(r.status == "failed" for r in results):
+            raise typer.Exit(code=1)
+        typer.echo(f"OK — {len(results)} job(s) finished")
+    except ETLError as exc:
+        logger.exception("ETL run-all failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    except Exception as exc:
+        logger.exception("ETL run-all failed")
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+def _print_etl_result(result: object) -> None:
+    from app.etl.result import EtlResult
+
+    assert isinstance(result, EtlResult)
+    typer.echo(
+        f"[{result.status}] {result.entity}: "
+        f"read={result.rows_read} valid={result.rows_valid} "
+        f"rejected={result.rows_rejected} loaded={result.rows_loaded} "
+        f"({result.duration_seconds:.2f}s)"
+    )
+    if result.reject_path:
+        typer.echo(f"  rejects → {result.reject_path}")
+    for err in result.errors:
+        typer.echo(f"  error: {err}")
 
 
 @seed_app.command("run")

@@ -182,15 +182,20 @@ Pipeline CSV/Excel/JSON → validate → clean → transform → load.
 ### Deliverables
 
 - [x] `docs/etl-design.md`  
-- [ ] `app/etl/**`  
-- [ ] sample raw files  
+- [x] `src/app/etl/**` pipeline  
+- [x] `src/app/schemas/*` inbound contracts  
+- [x] `src/app/services/etl_service.py`  
+- [x] CLI `etl run` / `etl run-all`  
+- [x] `datasets/raw/samples/*` + `manifest.example.yaml`  
+- [x] `docs/data-contracts.md`  
 
 ### Checklist
 
-- [ ] Load customers/products/orders từ samples  
-- [ ] Invalid rows → rejected file  
-- [ ] Idempotent re-run masters (upsert)  
-- [ ] loguru metrics rows read/loaded  
+- [x] Extractors CSV/Excel/JSON  
+- [x] Validate + clean + transform + upsert load  
+- [x] Reject file under `datasets/rejected/`  
+- [x] Unit tests cleaning/extract/validate/manifest  
+- [ ] Live PG: `etl run-all --samples` (manual)  
 
 ### Ưu tiên
 

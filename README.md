@@ -210,6 +210,21 @@ sales-dashboard sql run I14 --limit 20
 
 Chi tiết: [`sql/README.md`](sql/README.md), metrics: [`sql/metrics.md`](sql/metrics.md).
 
+### ETL (Phase 5)
+
+```bash
+# Load full sample pack (CSV + Excel + JSON) in FK order
+sales-dashboard etl run-all --samples
+
+# Or one entity
+sales-dashboard etl run -e customers -f datasets/raw/samples/customers.csv --ensure-masters
+
+# Manifest
+sales-dashboard etl run-all --manifest datasets/manifest.example.yaml
+```
+
+Contracts: [`docs/data-contracts.md`](docs/data-contracts.md). Rejects: `datasets/rejected/`.
+
 
 ---
 
@@ -235,7 +250,7 @@ Theo [`docs/development-roadmap.md`](docs/development-roadmap.md) (điều chỉ
 | **Database models** | SQLAlchemy + Alembic schema 16 bảng | ✅ |
 | **Seed data** | Faker multi-scale + sample export | ✅ |
 | **SQL catalog** | 135 queries + CLI runner | ✅ |
-| ETL | CSV/Excel/JSON → PostgreSQL | ⏳ |
+| **ETL** | CSV/Excel/JSON → PostgreSQL | ✅ |
 | Analytics | pandas metrics, RFM, ABC, cohort | ⏳ |
 | Visualization | Plotly / Matplotlib | ⏳ |
 | Dashboard | Streamlit | ⏳ |

@@ -116,5 +116,9 @@ CSV / Excel / JSON
 | Thiết kế database | ✅ Hoàn thành (docs) |
 | SQL roadmap | ✅ Hoàn thành (docs) |
 | ETL / Python / Dashboard / Report | ✅ Hoàn thành (docs) |
-| Project scaffold (config, CLI, DB connection) | ✅ Hoàn thành |
-| Models / ETL / Analytics / Dashboard / Report | ⏳ Chờ yêu cầu theo phase |
+| Project scaffold | ✅ |
+| Database models | ✅ |
+| Seed data | ✅ |
+| SQL catalog (135) | ✅ |
+| ETL pipeline | ✅ |
+| Analytics / Visualization / Dashboard / Report | ⏳ |

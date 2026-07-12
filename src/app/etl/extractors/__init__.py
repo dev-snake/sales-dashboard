@@ -1,1 +1,5 @@
-"""File extractors: CSV, Excel, JSON (Phase 5)."""
+"""File extractors."""
+
+from app.etl.extractors.factory import get_extractor
+
+__all__ = ["get_extractor"]
