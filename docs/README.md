@@ -122,4 +122,5 @@ CSV / Excel / JSON
 | SQL catalog (135) | ✅ |
 | ETL pipeline | ✅ |
 | Python analytics | ✅ |
-| Visualization / Dashboard / Report | ⏳ |
+| Visualization | ✅ |
+| Dashboard / Report | ⏳ |

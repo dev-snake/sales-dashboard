@@ -166,8 +166,10 @@ mpl_line(...), mpl_barh(...), save_fig(path, dpi=140)
 
 ## 10.9 Checklist
 
-- [ ] Plotly covers 8 chart types  
-- [ ] Matplotlib for PDF core charts  
-- [ ] styles palette shared  
-- [ ] No DB access in visualization package  
-- [ ] Formatters money/percent  
+- [x] Plotly covers 8 chart types (+ dual line helper)  
+- [x] Matplotlib for PDF core charts (line, bar, barh, pie, hist + save_fig)  
+- [x] styles palette shared  
+- [x] No DB access in visualization package  
+- [x] Formatters money/percent  
+- [x] Unit smoke tests  
+

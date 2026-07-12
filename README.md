@@ -265,7 +265,7 @@ Theo [`docs/development-roadmap.md`](docs/development-roadmap.md) (điều chỉ
 | **SQL catalog** | 135 queries + CLI runner | ✅ |
 | **ETL** | CSV/Excel/JSON → PostgreSQL | ✅ |
 | **Analytics** | MetricsService, RFM, ABC, cohort, trends | ✅ |
-| Visualization | Plotly / Matplotlib | ⏳ |
+| **Visualization** | Plotly 8 types + Matplotlib PDF helpers | ✅ |
 | Dashboard | Streamlit | ⏳ |
 | Reporting | Excel + PDF | ⏳ |
 | Testing | Mở rộng coverage | ⏳ |

@@ -261,13 +261,16 @@ Library chart Plotly + Matplotlib sẵn sàng cho dashboard & PDF.
 ### Deliverables
 
 - [x] `docs/data-visualization.md`  
-- [ ] `app/visualization/*`  
+- [x] `src/app/visualization/styles.py`  
+- [x] `src/app/visualization/plotly_charts.py` (8 types)  
+- [x] `src/app/visualization/matplotlib_charts.py`  
+- [x] Unit smoke tests  
 
 ### Checklist
 
-- [ ] Mỗi chart type 1 factory  
-- [ ] Không DB trong package  
-- [ ] PNG export matplotlib OK  
+- [x] Line, Bar, Pie, Area, Scatter, Histogram, Heatmap, Treemap  
+- [x] Không DB trong package  
+- [x] PNG export matplotlib OK (`fig_to_png_bytes` / `save_fig`)  
 
 ### Ưu tiên
 
