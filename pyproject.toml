@@ -1,0 +1,177 @@
+[build-system]
+requires = ["setuptools>=75.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sales-dashboard"
+version = "0.1.0"
+description = "Sales Analytics Dashboard — portfolio project (Python, PostgreSQL, Streamlit)"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+authors = [{ name = "Sales Dashboard Contributors" }]
+keywords = ["sales", "analytics", "postgresql", "etl", "streamlit", "bi"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Database",
+    "Topic :: Office/Business",
+]
+dependencies = [
+    "psycopg[binary]>=3.2",
+    "sqlalchemy>=2.0",
+    "alembic>=1.14",
+    "pandas>=2.2",
+    "numpy>=2.1",
+    "plotly>=5.24",
+    "matplotlib>=3.9",
+    "streamlit>=1.40",
+    "openpyxl>=3.1",
+    "reportlab>=4.2",
+    "python-dotenv>=1.0",
+    "pydantic>=2.10",
+    "pydantic-settings>=2.6",
+    "loguru>=0.7",
+    "typer>=0.15",
+    "faker>=33.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ruff>=0.8",
+    "black>=24.10",
+    "mypy>=1.13",
+    "pandas-stubs>=2.2",
+    "types-openpyxl>=3.1",
+]
+
+[project.scripts]
+sales-dashboard = "app.cli.main:app"
+
+[project.urls]
+Documentation = "docs/README.md"
+Repository = "."
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["py.typed"]
+
+# ---------------------------------------------------------------------------
+# Ruff — linter + import sorter (fast)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["src", "tests"]
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "alembic/versions",
+    "datasets",
+    "logs",
+    "output",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # bugbear
+    "UP",  # pyupgrade
+    "SIM", # simplify
+    "N",   # pep8-naming
+    "ASYNC",
+]
+ignore = [
+    "E501", # line length handled by Black
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+force-single-line = false
+combine-as-imports = true
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["N802", "N803"]
+"alembic/**" = ["E501", "N999"]
+
+# ---------------------------------------------------------------------------
+# Black — formatter
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 100
+target-version = ["py313"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.venv
+  | venv
+  | alembic/versions
+  | datasets
+)/
+'''
+
+# ---------------------------------------------------------------------------
+# mypy — static types
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.13"
+mypy_path = "src"
+packages = ["app"]
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+strict_equality = true
+show_error_codes = true
+pretty = true
+ignore_missing_imports = true
+exclude = [
+    "alembic/",
+    "tests/",
+    "datasets/",
+    "scripts/",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "streamlit.*",
+    "plotly.*",
+    "reportlab.*",
+    "faker.*",
+]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
+markers = [
+    "unit: pure unit tests (no database)",
+    "integration: tests requiring PostgreSQL",
+    "data_quality: invariant / data validation tests",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

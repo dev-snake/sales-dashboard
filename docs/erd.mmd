@@ -1,0 +1,24 @@
+erDiagram
+    REGIONS ||--o{ REGIONS : parent
+    REGIONS ||--o{ STORES : has
+    REGIONS ||--o{ CUSTOMERS : has
+    STORES ||--o{ EMPLOYEES : employs
+    STORES ||--o{ ORDERS : places
+    STORES ||--o{ INVENTORY : stocks
+    STORES ||--o{ STOCK_MOVEMENTS : records
+    STORES ||--o{ RETURNS : handles
+    EMPLOYEES ||--o{ EMPLOYEES : manages
+    EMPLOYEES ||--o{ ORDERS : sells
+    CUSTOMERS ||--o{ ORDERS : buys
+    CATEGORIES ||--o{ CATEGORIES : parent
+    CATEGORIES ||--o{ PRODUCTS : classifies
+    BRANDS ||--o{ PRODUCTS : brands
+    SUPPLIERS ||--o{ PRODUCTS : supplies
+    PRODUCTS ||--o{ ORDER_ITEMS : included
+    PRODUCTS ||--o{ INVENTORY : stocked
+    PRODUCTS ||--o{ STOCK_MOVEMENTS : moved
+    PROMOTIONS ||--o{ ORDERS : applies
+    ORDERS ||--o{ ORDER_ITEMS : contains
+    ORDERS ||--o{ PAYMENTS : paid_by
+    ORDERS ||--o{ RETURNS : may_have
+    ORDER_ITEMS ||--o{ RETURNS : returned_as
