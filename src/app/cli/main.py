@@ -178,10 +178,68 @@ def etl_run() -> None:
 
 @seed_app.command("run")
 def seed_run(
-    scale: str = typer.Option("100", help="Scale tier: 100 | 1k | 10k | 100k | 1m"),
+    scale: str = typer.Option("100", "--scale", help="Scale: 100 | 1k | 10k | 100k | 1m"),
+    seed: int = typer.Option(42, "--seed", help="Random seed for reproducibility"),
+    locale: str = typer.Option("vi_VN", "--locale", help="Faker locale"),
+    reset: bool = typer.Option(False, "--reset", help="TRUNCATE all tables before seed"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip confirmation when --reset"),
+    export_samples: bool = typer.Option(
+        True,
+        "--export-samples/--no-export-samples",
+        help="Write ETL sample files under datasets/raw/samples/",
+    ),
 ) -> None:
-    """Seed data — not implemented in scaffold phase."""
-    typer.echo(f"Seed not implemented yet (Phase 3). Requested scale={scale}")
+    """Generate synthetic seed data into PostgreSQL."""
+    from app.database.engine import dispose_engine, get_engine
+    from app.database.session import reset_session_factory, session_scope
+    from app.seed.scale_config import get_scale_config
+    from app.services.seed_service import SeedService
+
+    try:
+        config = get_scale_config(scale)
+    except ValueError as exc:
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=2) from exc
+
+    if reset and not yes:
+        typer.confirm(
+            f"This will TRUNCATE all business tables then seed scale={config.name}. Continue?",
+            abort=True,
+        )
+
+    typer.echo(f"Seeding scale={config.name} orders={config.orders} seed={seed} reset={reset} …")
+    # Ensure fresh engine if settings changed
+    dispose_engine()
+    reset_session_factory()
+    _ = get_engine()
+
+    try:
+        with session_scope(commit=False) as session:
+            service = SeedService(session)
+            result = service.run(
+                scale=config.name,
+                seed=seed,
+                locale=locale,
+                reset=reset,
+                export_samples=export_samples,
+            )
+        typer.echo(f"OK — seed finished in {result.duration_seconds:.1f}s")
+        for key, value in sorted(result.counts.items()):
+            typer.echo(f"  {key}: {value}")
+        logger.info("Seed CLI completed | {}", result.counts)
+    except Exception as exc:
+        logger.exception("Seed failed")
+        typer.echo(f"ERROR — seed failed: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@seed_app.command("samples")
+def seed_samples() -> None:
+    """Export ETL sample files only (no database writes)."""
+    from app.seed.sample_export import export_etl_samples
+
+    path = export_etl_samples()
+    typer.echo(f"OK — samples written to {path}")
 
 
 @report_app.command("generate")
@@ -194,9 +252,101 @@ def report_generate(
 
 
 @sql_app.command("list")
-def sql_list() -> None:
-    """List SQL catalog entries — not implemented yet."""
-    typer.echo("SQL catalog runner not implemented yet (Phase 4).")
+def sql_list(
+    level: str | None = typer.Option(
+        None,
+        "--level",
+        "-l",
+        help="Filter: basic | intermediate | advanced | reporting | optimization",
+    ),
+) -> None:
+    """List SQL catalog entries."""
+    from app.sql_catalog import list_entries
+
+    try:
+        entries = list_entries(level=level.lower() if level else None)
+    except Exception as exc:
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    if not entries:
+        typer.echo("No SQL entries found.")
+        raise typer.Exit(code=0)
+
+    typer.echo(f"{'ID':<6} {'Level':<14} {'Title'}")
+    typer.echo("-" * 60)
+    for e in entries:
+        typer.echo(f"{e.id:<6} {e.level:<14} {e.title}")
+    typer.echo(f"\nTotal: {len(entries)}")
+
+
+@sql_app.command("show")
+def sql_show(query_id: str = typer.Argument(..., help="Query id, e.g. R04 or B01")) -> None:
+    """Print SQL text for a catalog entry."""
+    from app.sql_catalog import load_entry
+
+    try:
+        entry = load_entry(query_id)
+    except KeyError as exc:
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=2) from exc
+
+    typer.echo(f"-- {entry.id}: {entry.title}")
+    typer.echo(f"-- File: {entry.path}")
+    typer.echo(f"-- Skills: {entry.skills}")
+    typer.echo(f"-- Tables: {entry.tables}")
+    typer.echo("")
+    typer.echo(entry.sql)
+
+
+@sql_app.command("run")
+def sql_run(
+    query_id: str = typer.Argument(..., help="Query id, e.g. R04"),
+    limit: int | None = typer.Option(
+        None,
+        "--limit",
+        "-n",
+        help="Optional max rows to print (client-side truncate)",
+    ),
+) -> None:
+    """Execute a catalog SQL query against PostgreSQL and print rows."""
+    from sqlalchemy import text
+
+    from app.database.engine import get_engine
+    from app.sql_catalog import load_entry
+
+    try:
+        entry = load_entry(query_id)
+    except KeyError as exc:
+        typer.echo(f"ERROR — {exc}", err=True)
+        raise typer.Exit(code=2) from exc
+
+    # Skip pure comment / multi-statement lab notes carefully: execute full text
+    sql_text = entry.sql
+    if not sql_text.strip():
+        typer.echo("ERROR — empty SQL body", err=True)
+        raise typer.Exit(code=1)
+
+    try:
+        engine = get_engine()
+        with engine.connect() as conn:
+            result = conn.execute(text(sql_text))
+            if not result.returns_rows:
+                typer.echo("OK — statement executed (no rows returned).")
+                return
+            rows = result.fetchall()
+            keys = list(result.keys())
+    except Exception as exc:
+        logger.exception("SQL run failed | id={}", query_id)
+        typer.echo(f"ERROR — query failed: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(" | ".join(keys))
+    typer.echo("-" * 80)
+    shown = rows if limit is None else rows[:limit]
+    for row in shown:
+        typer.echo(" | ".join(str(v) for v in row))
+    typer.echo(f"\nRows: {len(rows)}" + (f" (showing {len(shown)})" if limit else ""))
 
 
 def run() -> None:

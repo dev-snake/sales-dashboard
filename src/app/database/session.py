@@ -31,6 +31,10 @@ def reset_session_factory() -> None:
     _SessionLocal = None
 
 
+# Re-export for callers that import from session module
+__all__ = ["get_session", "session_scope", "reset_session_factory"]
+
+
 def get_session() -> Generator[Session]:
     """Yield a session and guarantee close (generator style for DI-like use)."""
     session = _get_session_factory()()

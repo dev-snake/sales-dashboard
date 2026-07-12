@@ -183,6 +183,33 @@ sales-dashboard db tables     # 16 tables
 sales-dashboard db downgrade  # optional: -1
 ```
 
+### Seed data (Phase 3)
+
+```bash
+# Chỉ export file mẫu ETL (không cần DB)
+sales-dashboard seed samples
+
+# Seed vào PostgreSQL (cần migrate trước)
+sales-dashboard seed run --scale 100 --seed 42
+sales-dashboard seed run --scale 10k --reset --yes
+
+# Scale: 100 | 1k | 10k | 100k | 1m
+```
+
+Dữ liệu là **synthetic** (Faker) — không chứa liệu khách hàng thật.
+
+### SQL catalog (Phase 4)
+
+```bash
+sales-dashboard sql list
+sales-dashboard sql list --level advanced
+sales-dashboard sql show R04
+sales-dashboard sql run R01          # cần DB + seed
+sales-dashboard sql run I14 --limit 20
+```
+
+Chi tiết: [`sql/README.md`](sql/README.md), metrics: [`sql/metrics.md`](sql/metrics.md).
+
 
 ---
 
@@ -206,8 +233,8 @@ Theo [`docs/development-roadmap.md`](docs/development-roadmap.md) (điều chỉ
 | Docs / BA | Business & design docs | ✅ |
 | **Scaffold** | Cấu trúc project, config, CLI, DB connection | ✅ |
 | **Database models** | SQLAlchemy + Alembic schema 16 bảng | ✅ |
-| Seed data | Faker multi-scale | ⏳ |
-| SQL catalog | 100+ queries | ⏳ |
+| **Seed data** | Faker multi-scale + sample export | ✅ |
+| **SQL catalog** | 135 queries + CLI runner | ✅ |
 | ETL | CSV/Excel/JSON → PostgreSQL | ⏳ |
 | Analytics | pandas metrics, RFM, ABC, cohort | ⏳ |
 | Visualization | Plotly / Matplotlib | ⏳ |

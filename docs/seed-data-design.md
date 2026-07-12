@@ -178,14 +178,14 @@ Phục vụ Phase ETL không phụ thuộc full seed.
 
 ## 12.10 Data realism checklist
 
-- [ ] Seasonality visible on monthly chart  
-- [ ] Pareto: few products dominate revenue  
-- [ ] RFM segments not single-bucket  
-- [ ] Some low stock rows  
-- [ ] Cancelled orders exist  
-- [ ] Hierarchy manager_id non-null for most associates  
-- [ ] Categories parent_id multi-level ≥ 2 levels  
-- [ ] Locale names readable  
+- [x] Seasonality weights in date sampler (Nov/Dec/Tết + weekend)  
+- [x] Pareto: power-law customer/product order assignment  
+- [x] Status mix includes cancelled/pending  
+- [x] Low stock ~5% inventory rows  
+- [x] Manager hierarchy (1 manager/store + associates)  
+- [x] Categories multi-level parent_id  
+- [x] Sample export for ETL  
+- [ ] Validate on live DB after first `seed run` (seasonality chart, RFM spread)  
 
 ---
 

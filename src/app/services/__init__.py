@@ -1,4 +1,5 @@
-"""Application services / use-cases.
+"""Application services."""
 
-Stub package — metrics, seed, report services arrive in later phases.
-"""
+from app.services.seed_service import SeedService
+
+__all__ = ["SeedService"]

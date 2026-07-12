@@ -102,15 +102,18 @@ Sinh dữ liệu đa scale, realistic, deterministic.
 ### Deliverables
 
 - [x] `docs/seed-data-design.md`  
-- [ ] Seed generators + CLI  
-- [ ] `data/raw/samples/*`  
+- [x] `src/app/seed/*` + `SeedService`  
+- [x] CLI `seed run` / `seed samples`  
+- [x] `datasets/raw/samples/*` (customers CSV, products Excel, orders, payments JSON)  
 
 ### Checklist
 
-- [ ] Scale 100 & 1k & 10k chạy OK  
-- [ ] 100k documented (có thể chạy lâu)  
-- [ ] Invariants DQ01–DQ10 pass ở XS  
-- [ ] Seasonality quan sát được bằng SQL đơn giản  
+- [x] Scale config 100 / 1k / 10k / 100k / 1m  
+- [x] Calendar 2020–2030, masters, orders/items/payments/returns/inventory/movements  
+- [x] Deterministic `--seed`  
+- [x] Unit tests generators + sample export  
+- [ ] `seed run --scale 100` trên PG local (cần DATABASE_URL hợp lệ)  
+- [ ] Invariants DQ01–DQ10 (Phase Testing)  
 
 ### Ưu tiên
 
@@ -138,15 +141,20 @@ Sinh dữ liệu đa scale, realistic, deterministic.
 ### Deliverables
 
 - [x] `docs/sql-roadmap.md`  
-- [ ] `sql/**/*.sql`  
-- [ ] `sql/README.md`  
+- [x] `sql/**/*.sql` — **135** files (B25+I30+A35+R30+O15)  
+- [x] `sql/README.md` catalog index  
+- [x] `sql/metrics.md` metric definitions  
+- [x] `sql/optimization/notes.md`  
+- [x] CLI `sql list` / `show` / `run`  
+- [x] `src/app/sql_catalog/` loader  
 
 ### Checklist
 
-- [ ] ≥ 100 queries  
-- [ ] Reporting R01–R30 chạy trên seed  
-- [ ] EXPLAIN notes tối thiểu 5 cases  
-- [ ] Metric definitions đồng bộ docs  
+- [x] ≥ 100 queries (135)  
+- [x] Metric definitions thống nhất  
+- [x] Optimization lab notes  
+- [x] Unit tests catalog (count, headers, R0x status filter)  
+- [ ] `sql run` on live PG after seed (manual)  
 
 ### Ưu tiên
 

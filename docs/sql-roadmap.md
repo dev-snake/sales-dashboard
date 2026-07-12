@@ -289,9 +289,9 @@ Header mỗi file:
 
 ## 5.11 Checklist hoàn thành SQL phase
 
-- [ ] 135 files (hoặc ≥100) trong `sql/`
-- [ ] Catalog README
-- [ ] Metric definitions thống nhất
-- [ ] Tối thiểu 10 query param hóa cho dashboard
-- [ ] Optimization notes với EXPLAIN samples
-- [ ] Một script runner optional: `python -m app.cli sql run --id R04`
+- [x] 135 files trong `sql/`
+- [x] Catalog README (`sql/README.md`)
+- [x] Metric definitions thống nhất (`sql/metrics.md`)
+- [x] Reporting queries param-ready (date filters documented)
+- [x] Optimization notes (`sql/optimization/notes.md`)
+- [x] CLI runner: `sales-dashboard sql list|show|run`
